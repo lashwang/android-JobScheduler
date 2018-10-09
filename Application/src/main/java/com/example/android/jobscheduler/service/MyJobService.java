@@ -27,6 +27,13 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 import static com.example.android.jobscheduler.MainActivity.MESSENGER_INTENT_KEY;
 import static com.example.android.jobscheduler.MainActivity.MSG_COLOR_START;
 import static com.example.android.jobscheduler.MainActivity.MSG_COLOR_STOP;
@@ -43,6 +50,7 @@ public class MyJobService extends JobService {
     private static final String TAG = MyJobService.class.getSimpleName();
 
     private Messenger mActivityMessenger;
+    private static final String url = "http://seven-china.com/health";
 
     @Override
     public void onCreate() {
@@ -71,21 +79,21 @@ public class MyJobService extends JobService {
         // The work that this service "does" is simply wait for a certain duration and finish
         // the job (on another thread).
 
-        sendMessage(MSG_COLOR_START, params.getJobId());
-
-        long duration = params.getExtras().getLong(WORK_DURATION_KEY);
-
-        // Uses a handler to delay the execution of jobFinished().
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                sendMessage(MSG_COLOR_STOP, params.getJobId());
-                jobFinished(params, false);
-            }
-        }, duration);
+//        sendMessage(MSG_COLOR_START, params.getJobId());
+//
+//        long duration = params.getExtras().getLong(WORK_DURATION_KEY);
+//
+//        // Uses a handler to delay the execution of jobFinished().
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                sendMessage(MSG_COLOR_STOP, params.getJobId());
+//                jobFinished(params, false);
+//            }
+//        }, duration);
         Log.i(TAG, "on start job: " + params.getJobId());
-
+        performHttpRequest();
         // Return true as there's more work to be done with this job.
         return true;
     }
@@ -93,7 +101,7 @@ public class MyJobService extends JobService {
     @Override
     public boolean onStopJob(JobParameters params) {
         // Stop tracking these job parameters, as we've 'finished' executing.
-        sendMessage(MSG_COLOR_STOP, params.getJobId());
+//        sendMessage(MSG_COLOR_STOP, params.getJobId());
         Log.i(TAG, "on stop job: " + params.getJobId());
 
         // Return false to drop the job.
@@ -114,6 +122,29 @@ public class MyJobService extends JobService {
             mActivityMessenger.send(m);
         } catch (RemoteException e) {
             Log.e(TAG, "Error passing service object back to activity.");
+        }
+    }
+
+
+    public void performHttpRequest() {
+        try{
+            Response response;
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(5, TimeUnit.SECONDS)
+                    .build();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            response = client.newCall(request).execute();
+
+            if (!response.isSuccessful()){
+                throw new IOException("Unexpected code " + response);
+            }else{
+                Log.d(TAG, "http return success with code:" + response.code());
+            }
+        }catch (Exception e) {
+            Log.d(TAG, "get error:" + e.getMessage(), e);
         }
     }
 }

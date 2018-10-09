@@ -40,8 +40,15 @@ import android.widget.Toast;
 
 import com.example.android.jobscheduler.service.MyJobService;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.URL;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 /**
@@ -63,6 +70,7 @@ public class MainActivity extends Activity {
             = BuildConfig.APPLICATION_ID + ".MESSENGER_INTENT_KEY";
     public static final String WORK_DURATION_KEY =
             BuildConfig.APPLICATION_ID + ".WORK_DURATION_KEY";
+
 
     private EditText mDelayEditText;
     private EditText mDeadlineEditText;
@@ -121,40 +129,44 @@ public class MainActivity extends Activity {
      * Executed when user clicks on SCHEDULE JOB.
      */
     public void scheduleJob(View v) {
-        JobInfo.Builder builder = new JobInfo.Builder(mJobId++, mServiceComponent);
 
-        String delay = mDelayEditText.getText().toString();
-        if (!TextUtils.isEmpty(delay)) {
-            builder.setMinimumLatency(Long.valueOf(delay) * 1000);
-        }
-        String deadline = mDeadlineEditText.getText().toString();
-        if (!TextUtils.isEmpty(deadline)) {
-            builder.setOverrideDeadline(Long.valueOf(deadline) * 1000);
-        }
-        boolean requiresUnmetered = mWiFiConnectivityRadioButton.isChecked();
-        boolean requiresAnyConnectivity = mAnyConnectivityRadioButton.isChecked();
-        if (requiresUnmetered) {
-            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
-        } else if (requiresAnyConnectivity) {
+        for(int i = 0;i < 10;i++){
+            JobInfo.Builder builder = new JobInfo.Builder(mJobId++, mServiceComponent);
+            long laterncy = 300 * mJobId * 1000;
+            builder.setMinimumLatency(laterncy);
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            Log.d(TAG, String.format("Scheduling job for (%d), laterncy (%d)", mJobId , laterncy));
+            JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            tm.schedule(builder.build());
         }
-        builder.setRequiresDeviceIdle(mRequiresIdleCheckbox.isChecked());
-        builder.setRequiresCharging(mRequiresChargingCheckBox.isChecked());
 
-        // Extras, work duration.
-        PersistableBundle extras = new PersistableBundle();
-        String workDuration = mDurationTimeEditText.getText().toString();
-        if (TextUtils.isEmpty(workDuration)) {
-            workDuration = "1";
-        }
-        extras.putLong(WORK_DURATION_KEY, Long.valueOf(workDuration) * 1000);
+//        String delay = mDelayEditText.getText().toString();
+//        if (!TextUtils.isEmpty(delay)) {
+//            builder.setMinimumLatency(Long.valueOf(delay) * 1000);
+//        }
+//        String deadline = mDeadlineEditText.getText().toString();
+//        if (!TextUtils.isEmpty(deadline)) {
+//            builder.setOverrideDeadline(Long.valueOf(deadline) * 1000);
+//        }
+//        boolean requiresUnmetered = mWiFiConnectivityRadioButton.isChecked();
+//        boolean requiresAnyConnectivity = mAnyConnectivityRadioButton.isChecked();
+//        if (requiresUnmetered) {
+//            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED);
+//        } else if (requiresAnyConnectivity) {
+//            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+//        }
+//        builder.setRequiresDeviceIdle(mRequiresIdleCheckbox.isChecked());
+//        builder.setRequiresCharging(mRequiresChargingCheckBox.isChecked());
+//
+//        // Extras, work duration.
+//        PersistableBundle extras = new PersistableBundle();
+//        String workDuration = mDurationTimeEditText.getText().toString();
+//        if (TextUtils.isEmpty(workDuration)) {
+//            workDuration = "1";
+//        }
+//        extras.putLong(WORK_DURATION_KEY, Long.valueOf(workDuration) * 1000);
 
-        builder.setExtras(extras);
-
-        // Schedule job
-        Log.d(TAG, "Scheduling job");
-        JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        tm.schedule(builder.build());
+//        builder.setExtras(extras);
     }
 
     /**
@@ -185,6 +197,9 @@ public class MainActivity extends Activity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
 
     /**
      * A {@link Handler} allows you to send messages associated with a thread. A {@link Messenger}
