@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
 
         for(int i = 0;i < 10;i++){
             JobInfo.Builder builder = new JobInfo.Builder(mJobId++, mServiceComponent);
-            long laterncy = 300 * mJobId * 1000;
+            long laterncy = 180 * i * 1000;
             builder.setMinimumLatency(laterncy);
             builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
             Log.d(TAG, String.format("Scheduling job for (%d), laterncy (%d)", mJobId , laterncy));
