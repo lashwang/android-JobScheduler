@@ -93,7 +93,16 @@ public class MyJobService extends JobService {
 //            }
 //        }, duration);
         Log.i(TAG, "on start job: " + params.getJobId());
-        performHttpRequest();
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    performHttpRequest();;
+                }catch (Exception e){
+                    Log.d(TAG,"get error:",e);
+                }
+            }
+        }).start();
+
         // Return true as there's more work to be done with this job.
         return true;
     }
