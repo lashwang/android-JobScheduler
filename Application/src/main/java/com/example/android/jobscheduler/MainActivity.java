@@ -130,7 +130,7 @@ public class MainActivity extends Activity {
      */
     public void scheduleJob(View v) {
 
-        for(int i = 0;i < 10;i++){
+        for(int i = 0;i < 20;i++){
             JobInfo.Builder builder = new JobInfo.Builder(mJobId++, mServiceComponent);
             long laterncy = 180 * i * 1000;
             builder.setMinimumLatency(laterncy);

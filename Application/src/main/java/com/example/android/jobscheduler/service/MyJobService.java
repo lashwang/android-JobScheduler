@@ -50,7 +50,7 @@ public class MyJobService extends JobService {
     private static final String TAG = MyJobService.class.getSimpleName();
 
     private Messenger mActivityMessenger;
-    private static final String url = "http://seven-china.com/health";
+    private static final String url = "http://www.baidu.com";
 
     @Override
     public void onCreate() {
