@@ -38,6 +38,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.jobscheduler.receiver.AlarmReceiver;
 import com.example.android.jobscheduler.service.MyJobService;
 
 import java.io.IOException;
@@ -130,15 +131,17 @@ public class MainActivity extends Activity {
      */
     public void scheduleJob(View v) {
 
-        for(int i = 0;i < 20;i++){
-            JobInfo.Builder builder = new JobInfo.Builder(mJobId++, mServiceComponent);
-            long laterncy = 180 * i * 1000;
-            builder.setMinimumLatency(laterncy);
-            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-            Log.d(TAG, String.format("Scheduling job for (%d), laterncy (%d)", mJobId , laterncy));
-            JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            tm.schedule(builder.build());
-        }
+//        for(int i = 0;i < 20;i++){
+//            JobInfo.Builder builder = new JobInfo.Builder(mJobId++, mServiceComponent);
+//            long laterncy = 180 * i * 1000;
+//            builder.setMinimumLatency(laterncy);
+//            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+//            Log.d(TAG, String.format("Scheduling job for (%d), laterncy (%d)", mJobId , laterncy));
+//            JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//            tm.schedule(builder.build());
+//        }
+
+        AlarmReceiver.createAlarm(this);
 
 //        String delay = mDelayEditText.getText().toString();
 //        if (!TextUtils.isEmpty(delay)) {

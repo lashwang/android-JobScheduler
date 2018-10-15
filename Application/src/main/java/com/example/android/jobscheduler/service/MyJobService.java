@@ -135,7 +135,7 @@ public class MyJobService extends JobService {
     }
 
 
-    public void performHttpRequest() {
+    public static void performHttpRequest() {
         try{
             Response response;
 
