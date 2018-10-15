@@ -36,14 +36,15 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra("id",0);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() +
-                        3*60*1000, alarmIntent);
+//        long timeout = SystemClock.elapsedRealtime() + 3*60*1000;
+//        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+//                timeout, alarmIntent);
 //        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 //                SystemClock.elapsedRealtime() +
 //                        SYNC_FREQUENCY * 1000,alarmIntent);
-
+        long timeout = System.currentTimeMillis() + 3*60*1000;
+        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(timeout, alarmIntent);
+        alarmMgr.setAlarmClock(alarmClockInfo,alarmIntent);
     }
 
     @Override
