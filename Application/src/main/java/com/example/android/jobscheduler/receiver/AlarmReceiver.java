@@ -33,16 +33,13 @@ public class AlarmReceiver extends BroadcastReceiver {
             Log.e(TAG,"create alarm failed");
             return;
         }
-        int i;
-        for(i = 0;i < 10;i++) {
-            Intent intent = new Intent(context, AlarmReceiver.class);
-            intent.putExtra("id",i);
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra("id",0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
-            alarmMgr.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                    SystemClock.elapsedRealtime() +
-                            (i+1)*5*60*1000, alarmIntent);
-        }
+        alarmMgr.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() +
+                        3*60*1000, alarmIntent);
 //        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 //                SystemClock.elapsedRealtime() +
 //                        SYNC_FREQUENCY * 1000,alarmIntent);
