@@ -39,8 +39,18 @@ android {
     buildToolsVersion "25.0.3"
 
     defaultConfig {
+        applicationId "com.example.android.jobscheduler"
         minSdkVersion 23
         targetSdkVersion 27
+    }
+
+    productFlavors {
+        app1 {
+            applicationIdSuffix ".app1"
+        }
+        app2 {
+            applicationIdSuffix ".app2"
+        }
     }
 
     compileOptions {
