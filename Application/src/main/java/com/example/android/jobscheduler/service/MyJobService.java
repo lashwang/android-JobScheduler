@@ -104,7 +104,7 @@ public class MyJobService extends JobService {
         }).start();
 
         // Return true as there's more work to be done with this job.
-        return true;
+        return false;
     }
 
     @Override
@@ -137,6 +137,7 @@ public class MyJobService extends JobService {
 
     public static void performHttpRequest() {
         try{
+            Log.d(TAG,"performHttpRequest");
             Response response;
 
             OkHttpClient client = new OkHttpClient.Builder()

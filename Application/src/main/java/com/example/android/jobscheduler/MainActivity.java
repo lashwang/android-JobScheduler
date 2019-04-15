@@ -19,14 +19,17 @@ package com.example.android.jobscheduler;
 import android.app.Activity;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.PersistableBundle;
+import android.os.PowerManager;
 import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -131,17 +134,36 @@ public class MainActivity extends Activity {
      */
     public void scheduleJob(View v) {
 
-//        for(int i = 0;i < 20;i++){
-//            JobInfo.Builder builder = new JobInfo.Builder(mJobId++, mServiceComponent);
-//            long laterncy = 180 * i * 1000;
-//            builder.setMinimumLatency(laterncy);
-//            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-//            Log.d(TAG, String.format("Scheduling job for (%d), laterncy (%d)", mJobId , laterncy));
-//            JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//            tm.schedule(builder.build());
-//        }
-
         AlarmReceiver.createAlarm(this);
+
+        for(int i = 0;i < 20;i++){
+            JobInfo.Builder builder = new JobInfo.Builder(mJobId++, mServiceComponent);
+            long laterncy = 5*60*i*1000;
+            builder.setMinimumLatency(laterncy);
+            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            Log.d(TAG, String.format("Scheduling job for (%d), laterncy (%d)", mJobId , laterncy));
+            JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            tm.schedule(builder.build());
+        }
+
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED);
+        this.registerReceiver(new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                //onDeviceIdleChanged();
+                if (intent.getAction().equals(PowerManager.ACTION_DEVICE_IDLE_MODE_CHANGED)) {
+                    PowerManager pw = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                    boolean isIdle = pw.isDeviceIdleMode();
+                    Log.d(TAG,"DeviceIdle isIdle:" + isIdle);
+                }
+            }
+        }, filter);
+
+//        AlarmReceiver.createAlarm(this);
 
 //        String delay = mDelayEditText.getText().toString();
 //        if (!TextUtils.isEmpty(delay)) {
